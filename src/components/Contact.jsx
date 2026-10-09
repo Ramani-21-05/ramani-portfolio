@@ -1,41 +1,64 @@
 export default function Contact() {
   return (
     <section id="contact">
-      <div className="section-label">
-        <span>// 05</span>
-        <span>Contact &amp; Links</span>
+      <div style={{ marginBottom: '2rem' }}>
+        <span className="eyebrow-tag">
+          // 06 TRANSMISSION &amp; CHANNELS
+        </span>
+        <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
+          Direct Line &amp; <span style={{ color: 'var(--blue)' }}>Engineering Signal.</span>
+        </h2>
       </div>
 
-      <p style={{ color: 'var(--fg)', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '1.5rem', maxWidth: '640px' }}>
-        I'm always open to discussing algorithmic trading infrastructure, deep sequence architectures, and systems engineering. The fastest way to reach me is by email or directly on GitHub.
-      </p>
+      <div className="bento-card" style={{ padding: 'clamp(2rem, 4vw, 3rem)' }}>
+        <p style={{ color: 'var(--fg)', fontSize: '1.2rem', lineHeight: 1.6, maxWidth: '720px', marginBottom: '2.5rem' }}>
+          Open for selective systems engineering roles, quantitative infrastructure contracts, and deep sequence modeling collaborations.
+        </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontFamily: 'var(--font-mono)', fontSize: '13px' }}>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--fg-mute)', width: '80px' }}>Email:</span>
-          <a href="mailto:ramanikrish2105@gmail.com" className="link-blue">
-            ramanikrish2105@gmail.com
-          </a>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--fg-mute)', width: '80px' }}>GitHub:</span>
-          <a href="https://github.com/Ramani-21-05" target="_blank" rel="noreferrer" className="link-blue">
-            github.com/Ramani-21-05
-          </a>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--fg-mute)', width: '80px' }}>LinkedIn:</span>
-          <a href="https://linkedin.com/in/ramani2105" target="_blank" rel="noreferrer" className="link-blue">
-            linkedin.com/in/ramani2105
-          </a>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ color: 'var(--fg-mute)', width: '80px' }}>X:</span>
-          <a href="https://x.com/rk_d0tw" target="_blank" rel="noreferrer" className="link-blue">
-            x.com/rk_d0tw
-          </a>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem',
+          borderTop: '1px solid var(--line)', paddingTop: '2rem'
+        }} className="contact-grid">
+          {[
+            { label: 'EMAIL', val: 'ramanikrish2105@gmail.com', href: 'mailto:ramanikrish2105@gmail.com' },
+            { label: 'GITHUB', val: '@Ramani-21-05', href: 'https://github.com/Ramani-21-05' },
+            { label: 'LINKEDIN', val: 'in/ramani2105', href: 'https://linkedin.com/in/ramani2105' },
+            { label: 'X / TWITTER', val: '@rk_d0tw', href: 'https://x.com/rk_d0tw' },
+          ].map((item) => (
+            <div key={item.label}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--fg-mute)', marginBottom: '0.4rem', letterSpacing: '0.08em' }}>
+                {item.label}
+              </div>
+              <a
+                href={item.href}
+                target={item.href.startsWith('http') ? '_blank' : undefined}
+                rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+                style={{
+                  fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#fff',
+                  fontWeight: 600, transition: 'color 0.15s ease'
+                }}
+                onMouseEnter={e => e.target.style.color = 'var(--blue)'}
+                onMouseLeave={e => e.target.style.color = '#fff'}
+              >
+                {item.val} &rarr;
+              </a>
+            </div>
+          ))}
         </div>
       </div>
+
+      <style>{`
+        @media(max-width: 860px) {
+          .contact-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media(max-width: 480px) {
+          .contact-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

@@ -1,74 +1,102 @@
 export default function Now() {
+  const notes = [
+    {
+      num: '01',
+      tag: 'MARKET MICROSTRUCTURE & QUANT EXECUTION',
+      title: 'Statutory Friction Modeling & Sub-1ms Order Routing',
+      desc: 'Simulating walk-forward intraday breakouts across 183M tick bars from a 10-year Indian equity dataset (universe_4yr_nifty200). Many strategies look viable on paper but crumble in live execution due to statutory friction (STT 0.025%, GST 18%, exchange turnover charges) and spread crossing. I am modeling exact friction and routing maker limit orders inside the spread, backed by lock-free /dev/shm shared RAM buffers to keep signal-to-execution latency under 1ms.',
+      stack: ['Python', 'C++', 'Parquet Zero-Copy', '/dev/shm', 'L1/L2 Order Books', 'NSE'],
+      span: 2,
+    },
+    {
+      num: '02',
+      tag: 'DEEP LEARNING / PYTORCH',
+      title: 'Linear-Time Sequence Modeling (Transformers vs. Mamba)',
+      desc: 'Transformer self-attention explodes quadratically (O(N²)) on long video streams. For SignMamba, I designed a multi-stream architecture fusing MobileNetV3 spatial features with MediaPipe hand/pose MLPs into a Selective State Space Model (Mamba) decoder, achieving linear O(N) memory scaling and 30 FPS inference on laptop hardware.',
+      stack: ['PyTorch 2.5', 'Mamba-SSM', 'MediaPipe', 'CTC Loss', 'CUDA'],
+      span: 1,
+    },
+    {
+      num: '03',
+      tag: 'LINUX KERNEL PLUMBING',
+      title: 'Cgroups v2 Memory Throttling & Daemon Supervision',
+      desc: 'When executing long backtest batches or live WebSocket ingesters, runaway memory allocations can freeze the entire desktop. I enforce strict Cgroups v2 limits (MemoryMax=1.5G, MemoryHigh=1.2G) via systemd user units to ensure background jobs throttle smoothly without kernel panic.',
+      stack: ['Fedora Linux', 'Cgroups v2', 'systemd', 'SQLite FTS5'],
+      span: 1,
+    },
+  ]
+
   return (
-    <section id="now">
-      <div className="section-label">
-        <span>// 01</span>
-        <span>What I'm Working On Now</span>
+    <section id="now" style={{ position: 'relative' }}>
+      <div className="ambient-glow-2" />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        <div>
+          <span className="eyebrow-tag">
+            // 01 FIELD NOTES
+          </span>
+          <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
+            What Is Running On My <span style={{ color: 'var(--blue)' }}>Workstation Today.</span>
+          </h2>
+        </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--fg-mute)' }}>
+          DEREK SIVERS /NOW SPECIFICATION
+        </span>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--fg)' }}>
-              Intraday Market Microstructure &amp; Friction Modeling (NSE)
-            </h3>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)' }}>
-              Active Research
-            </span>
-          </div>
-          <p style={{ color: 'var(--fg-dim)', fontSize: '14px', lineHeight: 1.65, marginBottom: '0.85rem' }}>
-            Running walk-forward breakout simulations across 183M tick bars from a 10-year Indian equities dataset (<span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>universe_4yr_nifty200</span>). Many intraday backtests look great on paper but fail live due to Indian statutory levies (STT, stamp duty, GST, exchange fees) and spread crossing. I'm modeling exact friction and routing maker limit orders inside the spread, backed by lock-free <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>/dev/shm</span> shared memory ring buffers to keep latency under 1 millisecond.
-          </p>
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span className="code-pill">Python</span>
-            <span className="code-pill">C++</span>
-            <span className="code-pill">Parquet</span>
-            <span className="code-pill">/dev/shm</span>
-            <span className="code-pill">L1/L2 Order Books</span>
-          </div>
-        </div>
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem',
+      }} className="now-bento-grid">
+        {notes.map((item) => (
+          <div
+            key={item.num}
+            className="bento-card"
+            style={{
+              gridColumn: item.span === 2 ? 'span 2' : 'span 1',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  {item.tag}
+                </span>
+                <span className="watermark-num">
+                  {item.num}
+                </span>
+              </div>
 
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--fg)' }}>
-              Linear-Time Sequence Models for Continuous Video (SignMamba)
-            </h3>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)' }}>
-              PyTorch R&amp;D
-            </span>
-          </div>
-          <p style={{ color: 'var(--fg-dim)', fontSize: '14px', lineHeight: 1.65, marginBottom: '0.85rem' }}>
-            Standard Transformer self-attention scales quadratically with sequence length (<span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>O(N²)</span>), which causes out-of-memory errors on long video streams. I built a continuous sign language model in PyTorch using Selective State Space Models (Mamba) that scales linearly (<span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>O(N)</span>). It fuses MobileNetV3 RGB frames with 3-stream MediaPipe landmarks into a hierarchical Pyramid Mamba decoder, achieving 30 FPS inference on laptop hardware.
-          </p>
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span className="code-pill">PyTorch 2.5</span>
-            <span className="code-pill">Mamba-SSM</span>
-            <span className="code-pill">MediaPipe</span>
-            <span className="code-pill">CTC Loss</span>
-            <span className="code-pill">CUDA</span>
-          </div>
-        </div>
+              <h3 style={{
+                fontFamily: 'var(--font-display)', fontSize: item.span === 2 ? '1.5rem' : '1.25rem',
+                fontWeight: 700, color: '#fff', marginBottom: '1rem', letterSpacing: '-0.02em', lineHeight: 1.3
+              }}>
+                {item.title}
+              </h3>
 
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--fg)' }}>
-              Linux Daemons &amp; Kernel Resource Sandboxing
-            </h3>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)' }}>
-              Systems Plumbing
-            </span>
+              <p style={{ color: 'var(--fg-dim)', fontSize: '14px', lineHeight: 1.7, marginBottom: '2rem' }}>
+                {item.desc}
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '1.25rem', borderTop: '1px solid var(--line-subtle)' }}>
+              {item.stack.map(s => (
+                <span key={s} className="tech-tag">{s}</span>
+              ))}
+            </div>
           </div>
-          <p style={{ color: 'var(--fg-dim)', fontSize: '14px', lineHeight: 1.65, marginBottom: '0.85rem' }}>
-            When running long simulation batches or WebSocket data collectors, runaway memory allocations can freeze an entire workstation. I supervise all long-running processes using systemd user units with Cgroups v2 limits (<span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>MemoryMax=1.5G</span>, <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--fg)' }}>MemoryHigh=1.2G</span>) and watchdog auto-restarts, ensuring background jobs throttle safely without crashing the desktop.
-          </p>
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span className="code-pill">Fedora Linux</span>
-            <span className="code-pill">Cgroups v2</span>
-            <span className="code-pill">systemd</span>
-            <span className="code-pill">SQLite FTS5</span>
-          </div>
-        </div>
+        ))}
       </div>
+
+      <style>{`
+        @media(max-width: 860px) {
+          .now-bento-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .now-bento-grid .bento-card {
+            grid-column: span 1 !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }
