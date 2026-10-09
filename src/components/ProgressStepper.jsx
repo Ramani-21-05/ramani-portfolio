@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const SECTIONS = ['hero', 'about', 'skills', 'projects', 'experience', 'contact']
+const SECTIONS = ['hero', 'now', 'linux', 'projects', 'skills', 'contact']
 
 export default function ProgressStepper() {
   const [active, setActive] = useState(0)
@@ -15,7 +15,7 @@ export default function ProgressStepper() {
           }
         })
       },
-      { threshold: 0.4 }
+      { threshold: 0.35 }
     )
     SECTIONS.forEach(id => {
       const el = document.getElementById(id)
@@ -27,7 +27,7 @@ export default function ProgressStepper() {
   return (
     <div className="stepper">
       {SECTIONS.map((id, i) => (
-        <a key={id} href={`#${id}`}>
+        <a key={id} href={`#${id}`} aria-label={`Section ${id}`}>
           <div className={`stepper-dot ${i === active ? 'active' : ''}`} />
         </a>
       ))}

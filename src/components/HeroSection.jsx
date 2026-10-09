@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 
-const WORDS = ['Systems.', 'Engines.', 'Products.', 'Futures.']
+const TERMINAL_LINES = [
+  { prompt: true,  text: "sysctl -a | grep -E 'cgroup|shm'" },
+  { prompt: false, text: "kernel.cgroups_v2 = enabled (unified hierarchy)" },
+  { prompt: false, text: "shm_scratchpad = /dev/shm/nifty_l2_ring [Lock-Free Sub-1ms]" },
+  { prompt: true,  text: "cat /proc/systems_state" },
+  { prompt: false, text: "STATUS: ACTIVE • PYTORCH 2.5 • MAMBA-SSM • DUCKDB • FEDORA 41" },
+]
 
 export default function HeroSection() {
-  const [wordIdx, setWordIdx] = useState(0)
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const heroRef = useRef(null)
 
-  // Cycle words
-  useEffect(() => {
-    const id = setInterval(() => setWordIdx(i => (i + 1) % WORDS.length), 2600)
-    return () => clearInterval(id)
-  }, [])
-
-  // Parallax on mouse
   useEffect(() => {
     const fn = (e) => {
       if (!heroRef.current) return
       const rect = heroRef.current.getBoundingClientRect()
       setMouse({
-        x: ((e.clientX - rect.width / 2) / rect.width) * 30,
-        y: ((e.clientY - rect.height / 2) / rect.height) * 20,
+        x: ((e.clientX - rect.width / 2) / rect.width) * 20,
+        y: ((e.clientY - rect.height / 2) / rect.height) * 15,
       })
     }
     window.addEventListener('mousemove', fn, { passive: true })
@@ -33,107 +31,115 @@ export default function HeroSection() {
       display: 'flex', flexDirection: 'column', justifyContent: 'center',
       padding: `0 var(--gutter)`,
       position: 'relative', overflow: 'hidden',
+      paddingTop: '6rem', paddingBottom: '4rem',
     }}>
-      {/* BIG bg number */}
+      {/* Background Glow */}
       <div style={{
-        position: 'absolute', right: '-2vw', bottom: '-4vh',
-        fontFamily: 'var(--font-display)', fontSize: 'clamp(14rem,30vw,28rem)',
-        fontWeight: 800, lineHeight: 1, userSelect: 'none', pointerEvents: 'none',
-        color: 'transparent', WebkitTextStroke: '1px rgba(200,255,0,0.04)',
-        transform: `translate(${mouse.x * .5}px, ${mouse.y * .5}px)`,
-        transition: 'transform .8s var(--ease-out-expo)',
-      }}>01</div>
-
-      {/* Orb parallax */}
-      <div style={{
-        position: 'absolute', top: '20%', right: '10%',
-        width: 'clamp(280px,35vw,480px)', height: 'clamp(280px,35vw,480px)',
+        position: 'absolute', top: '25%', right: '15%',
+        width: 'clamp(280px, 35vw, 500px)', height: 'clamp(280px, 35vw, 500px)',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(155,92,255,0.15) 0%, transparent 70%)',
-        filter: 'blur(60px)',
-        transform: `translate(${mouse.x * 1.2}px, ${mouse.y}px)`,
-        transition: 'transform .9s var(--ease-out-expo)',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', bottom: '15%', left: '5%',
-        width: 'clamp(200px,25vw,360px)', height: 'clamp(200px,25vw,360px)',
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(200,255,0,0.1) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%)',
         filter: 'blur(80px)',
-        transform: `translate(${-mouse.x * .8}px, ${-mouse.y * .5}px)`,
-        transition: 'transform .9s var(--ease-out-expo)',
+        transform: `translate(${mouse.x * 1.2}px, ${mouse.y}px)`,
         pointerEvents: 'none',
       }} />
 
-      {/* Content */}
       <div className="hero-content" style={{ position: 'relative', zIndex: 10, maxWidth: 'var(--container)', width: '100%', margin: '0 auto' }}>
-        {/* Availability */}
-        <div style={{ marginBottom: '2.5rem' }}>
+        
+        {/* Status Badge */}
+        <div style={{ marginBottom: '1.75rem' }}>
           <span className="avail-badge">
             <span className="avail-dot" />
-            Available for Internships — 2026
+            LIVE SYSTEMS LAB • FEDORA LINUX WORKSTATION • COIMBATORE
           </span>
         </div>
 
-        {/* Main headline */}
-        <h1 className="display" style={{ marginBottom: '1.5rem', maxWidth: '900px' }}>
-          I build{' '}
-          <span style={{ color: 'var(--fg-mute)' }}>AI-powered</span>
-          <br />
-          <span style={{
-            color: 'var(--acid)',
-            display: 'inline-block',
-            minWidth: '5ch',
-            transition: 'opacity .3s ease',
-          }} key={wordIdx}>
-            {WORDS[wordIdx]}
-          </span>
-        </h1>
+        {/* Display Headline */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: '3.5rem', alignItems: 'center' }} className="hero-grid">
+          <div>
+            <h1 className="display" style={{ marginBottom: '1.5rem' }}>
+              I build systems that don’t crash under{' '}
+              <span style={{ color: 'var(--blue)', textShadow: '0 0 40px rgba(56, 189, 248, 0.4)' }}>
+                pressure.
+              </span>
+            </h1>
 
-        {/* Sub */}
-        <p className="body-lg" style={{ maxWidth: '480px', marginBottom: '3rem' }}>
-          Final year AI & DS student and Full-Stack Developer specializing in LLM agents, automation pipelines, and scalable web applications.
-        </p>
+            <p className="body-lg" style={{ maxWidth: '580px', marginBottom: '2.5rem', color: 'var(--fg-dim)' }}>
+              Operating at the hardware boundary: low-latency algorithmic trading pipelines, PyTorch linear-time sequence models (Transformers &amp; Mamba), and Linux Cgroups v2 memory sandboxes.
+            </p>
 
-        {/* CTAs */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <a href="#projects" className="btn btn-acid">View Work</a>
-          <a href="#contact" className="btn btn-outline">Get in Touch</a>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <a href="#now" className="btn btn-acid">Active Field Notes</a>
+              <a href="#linux" className="btn btn-outline">Linux Architecture</a>
+            </div>
+          </div>
+
+          {/* Terminal Console Mockup */}
+          <div className="terminal-card" style={{
+            transform: `translate(${-mouse.x * 0.4}px, ${-mouse.y * 0.4}px)`,
+            transition: 'transform 0.4s ease-out'
+          }}>
+            <div className="terminal-header">
+              <div className="terminal-dots">
+                <span className="terminal-dot close" />
+                <span className="terminal-dot min" />
+                <span className="terminal-dot max" />
+              </div>
+              <span>rk@fedora:~/systems-lab</span>
+              <span style={{ fontSize: '10px', color: 'var(--blue)' }}>v6.11-x86_64</span>
+            </div>
+            <div className="terminal-body" style={{ minHeight: '220px', background: 'rgba(5, 7, 11, 0.95)' }}>
+              {TERMINAL_LINES.map((line, idx) => (
+                <div key={idx} style={{ marginBottom: '0.45rem' }}>
+                  {line.prompt ? (
+                    <span>
+                      <span className="terminal-prompt">rk@fedora:~$ </span>
+                      <span style={{ color: '#fff' }}>{line.text}</span>
+                    </span>
+                  ) : (
+                    <span style={{ color: 'var(--fg-dim)', paddingLeft: '1rem', display: 'block' }}>
+                      ↳ {line.text}
+                    </span>
+                  )}
+                </div>
+              ))}
+              <div style={{ marginTop: '0.8rem' }}>
+                <span className="terminal-prompt">rk@fedora:~$ </span>
+                <span style={{
+                  display: 'inline-block', width: '8px', height: '14px',
+                  background: 'var(--blue)', verticalAlign: 'middle',
+                  animation: 'dotBlink 1s infinite'
+                }} />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Meta row */}
+        {/* Telemetry Numbers Row */}
         <div className="hero-stats" style={{
-          marginTop: '5rem',
-          display: 'flex', gap: '3rem', flexWrap: 'wrap',
-          borderTop: '1px solid rgba(255,255,255,0.07)',
+          marginTop: '4.5rem',
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem',
+          borderTop: '1px solid var(--line)',
           paddingTop: '2rem',
         }}>
           {[
-            ['04+', 'Live Projects'],
-            ['12+', 'Certifications'],
-            ['3rd', 'Datathon Finalist'],
+            ['183M+', 'Historical Tick Bars Modeled'],
+            ['Sub-2ms', 'SQLite FTS5 Query Latency'],
+            ['Linear O(N)', 'Sequence Memory Inference'],
+            ['0% Overhead', 'Lock-Free /dev/shm Ring Buffers'],
           ].map(([val, lbl]) => (
             <div key={lbl}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem,3vw,2.5rem)', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--acid)' }}>{val}</div>
-              <div className="body-sm" style={{ marginTop: '.15rem' }}>{lbl}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)', fontWeight: 700, color: 'var(--blue)', letterSpacing: '-0.03em' }}>{val}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--fg-dim)', marginTop: '.25rem', letterSpacing: '.04em', textTransform: 'uppercase' }}>{lbl}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div style={{
-        position: 'absolute', bottom: '2.5rem', left: 'var(--gutter)',
-        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.75rem',
-      }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--fg-mute)' }}>Scroll</span>
-        <div className="scroll-line" />
-      </div>
       <style>{`
-        @media(max-width:768px){
-          .hero-content{margin-top: 6rem!important}
-          .hero-stats{gap: 1.5rem!important; justify-content: space-between}
+        @media(max-width:960px){
+          .hero-grid{grid-template-columns:1fr!important; gap:2.5rem!important}
+          .hero-stats{grid-template-columns:repeat(2, 1fr)!important; gap: 1.5rem!important}
         }
       `}</style>
     </section>
