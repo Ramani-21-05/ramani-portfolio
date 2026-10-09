@@ -49,32 +49,30 @@ export default function ToolkitBento() {
   ]
 
   return (
-    <section id="systems">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
+    <section id="toolkit" style={{ position: 'relative' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
         <div>
-          <span className="eyebrow-tag">
-            // 04 SYSTEMS WEAPONRY
-          </span>
-          <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
-            Production <span style={{ color: 'var(--blue)' }}>Toolkit &amp; Runtimes.</span>
+          <span className="eyebrow-tag">// 03 TOOLKIT &amp; RUNTIMES</span>
+          <h2 className="section-title">
+            Engine Inventory <span style={{ color: 'var(--blue)' }}>&amp; Tooling Matrix.</span>
           </h2>
         </div>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--fg-mute)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--fg-mute)' }}>
           ZERO COMMODITIZED TEMPLATES
-        </span>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }} className="toolkit-bento-grid">
+      <div className="toolkit-bento-grid">
         {tools.map((t) => (
           <div key={t.category} className="bento-card">
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.12em', display: 'block', marginBottom: '0.4rem' }}>
               {t.category}
             </span>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '1.25rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: '#fff', marginBottom: '1rem' }}>
               {t.highlight}
             </h3>
 
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '13px', color: 'var(--fg-dim)' }}>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '13px', color: 'var(--fg-dim)' }}>
               {t.items.map((item) => (
                 <li key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
                   <span style={{ color: 'var(--blue)', fontFamily: 'var(--font-mono)' }}>›</span>
@@ -85,14 +83,6 @@ export default function ToolkitBento() {
           </div>
         ))}
       </div>
-
-      <style>{`
-        @media(max-width: 860px) {
-          .toolkit-bento-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 
-const CONFIGS = [
+const LAB_CONFIGS = [
   {
+    id: 'systemd',
     title: 'systemd / cgroups v2 unit',
     filename: 'quant-engine.service',
+    lang: 'ini',
     code: `[Unit]
 Description=Intraday Algorithmic Microstructure Engine
 After=network-online.target
@@ -28,8 +30,10 @@ ReadWritePaths=/dev/shm /run/media/rk/fe/LS
 WantedBy=default.target`
   },
   {
+    id: 'shm',
     title: '/dev/shm lock-free ring',
     filename: 'shm_tick_ring.py',
+    lang: 'python',
     code: `import mmap
 import os
 import struct
@@ -48,18 +52,21 @@ def write_tick(ts_ns: int, price: float, vol: int, offset: int):
     # Measured serialization & IPC transfer latency: < 450 nanoseconds`
   },
   {
-    title: 'workstation cluster topology',
+    id: 'topology',
+    title: 'cluster nodes topology',
     filename: 'cluster_nodes.json',
+    lang: 'json',
     code: `{
-  "primary_compute": {
-    "node": "Fedora 41 Workstation (Local)",
-    "specs": "Linux 6.11 x86_64 • CUDA Runtime • Dual NVMe",
-    "roles": ["PyTorch 2.5 Sequence Training", "183M Tick Backtests", "DuckDB Cold Lake"]
+  "primary_workstation": {
+    "host": "Fedora 41 Workstation (Local)",
+    "kernel": "Linux 6.11.8 x86_64",
+    "compute": "CUDA Runtime • Dual NVMe • Cgroups v2",
+    "workloads": ["PyTorch Mamba Training", "183M Tick Backtests", "DuckDB Cold Lake"]
   },
-  "remote_executor": {
-    "node": "Arch Linux Clamshell Node (ssh dot / 172.28.30.54)",
+  "remote_node": {
+    "host": "Arch Linux Clamshell (ssh dot / 172.28.30.54)",
     "specs": "Headless Arch • Rootless Podman Quadlets",
-    "roles": ["Overnight Parameter Sweeps", "Live FYERS OMS Feeds", "Watchdog Telemetry"]
+    "workloads": ["24/7 Overnight Parameter Sweeps", "FYERS OMS Live Feeds", "Watchdog Telemetry"]
   }
 }`
   }
@@ -67,127 +74,148 @@ def write_tick(ts_ns: int, price: float, vol: int, offset: int):
 
 export default function KernelArchitecture() {
   const [activeTab, setActiveTab] = useState(0)
+  const [copiedCode, setCopiedCode] = useState(false)
+
+  const activeConfig = LAB_CONFIGS[activeTab]
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(activeConfig.code)
+    setCopiedCode(true)
+    setTimeout(() => setCopiedCode(false), 2000)
+  }
 
   return (
-    <section id="kernel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
+    <section id="lab" style={{ position: 'relative' }}>
+      {/* Section Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
         <div>
-          <span className="eyebrow-tag">
-            // 03 KERNEL &amp; PLUMBING
-          </span>
-          <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
-            Linux Internals &amp; <span style={{ color: 'var(--blue)' }}>Kernel Sandboxing.</span>
+          <span className="eyebrow-tag">// 02 WORKSTATION &amp; INFRASTRUCTURE</span>
+          <h2 className="section-title">
+            Linux Systems <span style={{ color: 'var(--blue)' }}>&amp; Hardware Lab.</span>
           </h2>
         </div>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--fg-mute)' }}>
-          HARDWARE BOUNDARY ARCHITECTURE
-        </span>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--fg-mute)' }}>
+          DUAL-NODE CLUSTER &bull; LINUX 6.11 KERNEL
+        </div>
       </div>
 
-      <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1.25fr', gap: '2rem', alignItems: 'start'
-      }} className="kernel-grid">
-        {/* Left: Architecture Breakdown */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {[
-            {
-              num: '01',
-              title: 'Cgroups v2 Unified Resource Sandboxing',
-              desc: 'Enforces strict MemoryMax=1.5G and MemoryHigh=1.2G limits on simulation processes. When worker memory grows during heavy pandas/parquet merges, the kernel throttles allocations rather than triggering an unrecoverable system freeze.'
-            },
-            {
-              num: '02',
-              title: 'Lock-Free Shared Memory Ring Buffers (/dev/shm)',
-              desc: 'Direct mmap struct packing into RAM disks bypassing disk I/O completely. Ticks and order book deltas transfer from ingester to inference engine in under 450 nanoseconds.'
-            },
-            {
-              num: '03',
-              title: 'Systemd User Units with Watchdog Auto-Restart',
-              desc: 'Supervises all daemons with POSIX signal traps, WatchdogSec heartbeats, and zero-downtime auto-restarts, ensuring 24/7 background reliability.'
-            },
-            {
-              num: '04',
-              title: 'Dual Workstation Cluster (Fedora + Arch)',
-              desc: 'Primary compute workstation on Fedora 41 paired with a headless clamshell Arch Linux remote node for non-stop parameter sweeps.'
-            }
-          ].map((item) => (
-            <div key={item.num} className="bento-card" style={{ padding: '1.4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                <span style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
-                  color: 'var(--blue)', background: 'rgba(56, 189, 248, 0.08)',
-                  padding: '0.15rem 0.45rem', borderRadius: '3px', border: '1px solid var(--line)'
-                }}>
-                  {item.num}
-                </span>
-                <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 700, color: '#fff' }}>
-                  {item.title}
-                </h4>
-              </div>
-              <p style={{ color: 'var(--fg-dim)', fontSize: '13px', lineHeight: 1.6 }}>
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Right: Live Interactive Code Inspector */}
-        <div className="bento-card" style={{ padding: '0', overflow: 'hidden', position: 'sticky', top: '6rem' }}>
-          <div style={{
-            background: 'rgba(11, 16, 29, 0.95)', padding: '0.85rem 1.25rem',
-            borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem'
-          }}>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
-              {CONFIGS.map((c, i) => (
-                <button
-                  key={c.filename}
-                  onClick={() => setActiveTab(i)}
-                  style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '11px',
-                    padding: '0.35rem 0.75rem', borderRadius: '4px',
-                    background: activeTab === i ? 'var(--blue)' : 'rgba(255, 255, 255, 0.04)',
-                    color: activeTab === i ? '#05070f' : 'var(--fg-dim)',
-                    fontWeight: activeTab === i ? 700 : 500,
-                    border: '1px solid ' + (activeTab === i ? 'var(--blue)' : 'var(--line-subtle)'),
-                    cursor: 'pointer', transition: 'all 0.15s ease',
-                  }}
-                >
-                  {c.filename}
-                </button>
-              ))}
-            </div>
-
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--blue)' }}>
-              ● VERIFIED ON LINUX 6.11
+      {/* Lab Bento Grid */}
+      <div className="lab-bento-grid">
+        {/* Card 1: Dual Node Cluster Specs */}
+        <div className="bento-card lab-card-node">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)', fontWeight: 700 }}>
+              // NODE 01: PRIMARY WORKSTATION
+            </span>
+            <span className="hud-pill" style={{ fontSize: '10px' }}>
+              <span className="hud-dot" />
+              ONLINE (LOCAL)
             </span>
           </div>
 
-          <div style={{ padding: '1.5rem', background: '#070a12', overflowX: 'auto', minHeight: '380px' }}>
-            <pre style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '12px', lineHeight: 1.7, color: '#f1f5f9' }}>
-              <code>{CONFIGS[activeTab].code}</code>
-            </pre>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 800, color: '#fff', marginBottom: '0.75rem' }}>
+            Fedora 41 Workstation
+          </h3>
+          <p style={{ color: 'var(--fg-dim)', fontSize: '13px', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+            Primary development and deep learning environment. Hosts PyTorch 2.5 CUDA training runs, DuckDB 183M tick bar analytics, and sub-millisecond market simulation pipelines.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontFamily: 'var(--font-mono)', fontSize: '11px', borderTop: '1px solid var(--line-subtle)', paddingTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Kernel:</span>
+              <span style={{ color: '#fff' }}>Linux 6.11.8 x86_64</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Sandboxing:</span>
+              <span style={{ color: 'var(--blue)' }}>Cgroups v2 Unified Hierarchy</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Shared Memory:</span>
+              <span style={{ color: '#fff' }}>/dev/shm 16MB Ring Buffer</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Remote Clamshell Node */}
+        <div className="bento-card lab-card-node">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--blue)', fontWeight: 700 }}>
+              // NODE 02: REMOTE EXECUTION
+            </span>
+            <span className="hud-pill" style={{ fontSize: '10px' }}>
+              <span className="hud-dot" style={{ background: '#34d399' }} />
+              ssh dot [172.28.30.54]
+            </span>
           </div>
 
-          <div style={{
-            background: 'rgba(11, 16, 29, 0.8)', padding: '0.75rem 1.25rem',
-            borderTop: '1px solid var(--line)', display: 'flex',
-            justifyContent: 'space-between', alignItems: 'center',
-            fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--fg-mute)'
-          }}>
-            <span>CONFIG: {CONFIGS[activeTab].title}</span>
-            <span style={{ color: 'var(--blue)' }}>LOCK-FREE IPC ACTIVE</span>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 800, color: '#fff', marginBottom: '0.75rem' }}>
+            Arch Linux Clamshell Node
+          </h3>
+          <p style={{ color: 'var(--fg-dim)', fontSize: '13px', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+            Dedicated headless machine operating in clamshell mode on its 458GB storage pool. Dedicated to 24/7 overnight walk-forward backtests, live FYERS WebSocket telemetry, and watchdog supervision.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontFamily: 'var(--font-mono)', fontSize: '11px', borderTop: '1px solid var(--line-subtle)', paddingTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Deployment:</span>
+              <span style={{ color: '#fff' }}>Rootless Podman Quadlets</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Supervision:</span>
+              <span style={{ color: 'var(--blue)' }}>systemd user watchdog</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: 'var(--fg-mute)' }}>Duty Cycle:</span>
+              <span style={{ color: '#34d399' }}>24/7 Continuous Execution</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Interactive Configuration Inspector (Full Width on Bottom) */}
+        <div className="lab-card-terminal">
+          <div className="terminal-window" style={{ height: '100%' }}>
+            <div className="terminal-header">
+              <div className="terminal-controls">
+                <span className="terminal-btn close" />
+                <span className="terminal-btn min" />
+                <span className="terminal-btn max" />
+                <span className="terminal-title">{activeConfig.filename}</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <div className="terminal-tabs">
+                  {LAB_CONFIGS.map((cfg, idx) => (
+                    <button
+                      key={cfg.id}
+                      className={`terminal-tab-btn ${activeTab === idx ? 'active' : ''}`}
+                      onClick={() => setActiveTab(idx)}
+                    >
+                      {cfg.title}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleCopy}
+                  className="btn-secondary"
+                  style={{ padding: '0.2rem 0.6rem', fontSize: '10px', cursor: 'pointer' }}
+                >
+                  {copiedCode ? '✓ Copied' : 'Copy'}
+                </button>
+              </div>
+            </div>
+
+            <div className="terminal-body" style={{ minHeight: '260px' }}>
+              <pre style={{
+                fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#f1f5f9',
+                lineHeight: 1.6, margin: 0, overflowX: 'auto'
+              }}>
+                {activeConfig.code}
+              </pre>
+            </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media(max-width: 960px) {
-          .kernel-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

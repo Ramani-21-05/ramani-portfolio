@@ -3,9 +3,9 @@ export default function Contact() {
     <section id="contact">
       <div style={{ marginBottom: '2rem' }}>
         <span className="eyebrow-tag">
-          // 06 TRANSMISSION &amp; CHANNELS
+          // 05 TRANSMISSION &amp; CHANNELS
         </span>
-        <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
+        <h2 className="section-title">
           Direct Line &amp; <span style={{ color: 'var(--blue)' }}>Engineering Signal.</span>
         </h2>
       </div>

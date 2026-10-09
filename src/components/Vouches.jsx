@@ -3,9 +3,9 @@ export default function Vouches() {
     <section id="vouches">
       <div style={{ marginBottom: '2rem' }}>
         <span className="eyebrow-tag">
-          // 05 VERIFICATION &amp; PROOF
+          // 04 VERIFICATION &amp; PROOF
         </span>
-        <h2 className="display-title" style={{ marginTop: '0.5rem' }}>
+        <h2 className="section-title">
           Public Vouches &amp; <span style={{ color: 'var(--blue)' }}>Reputation Vault.</span>
         </h2>
       </div>
